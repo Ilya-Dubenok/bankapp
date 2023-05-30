@@ -59,13 +59,10 @@ public class DataSourceConnector {
     }
 
     private void initDbBase() {
-
-
         ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
 
         populator.addScript(new ClassPathResource("createSchemaTableEtc.sql"));
         populator.execute(this.dataSource);
-
     }
 
 
