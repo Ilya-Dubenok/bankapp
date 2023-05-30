@@ -4,6 +4,7 @@ out/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+*.DS_Store
 
 ### IntelliJ IDEA ###
 .idea/modules.xml
@@ -13,4 +14,3 @@ out/
 *.iws
 *.iml
 *.ipr
-
