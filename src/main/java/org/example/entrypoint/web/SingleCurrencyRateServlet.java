@@ -7,12 +7,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
-@WebServlet(urlPatterns = "/onlycurrencyrate")
-public class OnlyCurrencyRateServlet extends HttpServlet {
+@WebServlet(urlPatterns = "/singlecurrencyrate")
+public class SingleCurrencyRateServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
+        PrintWriter writer = resp.getWriter();
+        writer.write("It works");
     }
 }
