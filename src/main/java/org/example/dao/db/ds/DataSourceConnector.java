@@ -28,10 +28,15 @@ public class DataSourceConnector {
             throw new RuntimeException(e);
         }
 
-        String url = "jdbc:postgresql://localhost:5432/bank_app";
+        String db_host_address = System.getProperty("db_ip");
+        String db_login = System.getProperty("db_login");
+        String db_password = System.getProperty("db_password");
+
+        String url = "jdbc:postgresql://"+db_host_address+"/bank_app";
         Properties props = new Properties();
 
-        props.setProperty("dataSource.user", "postgres");
+        props.setProperty("dataSource.user", db_login);
+        props.setProperty("dataSource.password", db_password);
         props.setProperty("jdbcUrl", url);
         HikariConfig config = new HikariConfig(props);
         this.dataSource = new HikariDataSource(config);
