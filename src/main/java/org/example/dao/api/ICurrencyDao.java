@@ -7,9 +7,8 @@ import java.util.List;
 
 public interface ICurrencyDao {
 
-    boolean addCurrencyType(String curType);
 
-    List<CurrencyDTO> addCurrencies(String currType, List<CurrencyDTO> currencyDTOsToAd);
+    List<CurrencyDTO> saveCurrencies(String currType, List<CurrencyDTO> currencyDTOsToAd);
 
     List<CurrencyDTO> getAllCurrencies(String currType);
 
