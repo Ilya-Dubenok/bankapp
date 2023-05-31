@@ -1,9 +1,14 @@
 package org.example.core.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
+
 import java.util.Objects;
 
 public class CurrencyTypeDTO {
+    @JsonProperty("Cur_ID")
     private long id;
+    @JsonProperty("Cur_Abbreviation")
     private String name;
 
     public CurrencyTypeDTO() {
@@ -18,6 +23,7 @@ public class CurrencyTypeDTO {
         return id;
     }
 
+    @JsonSetter("Cur_ID")
     public void setId(long id) {
         this.id = id;
     }
@@ -26,6 +32,7 @@ public class CurrencyTypeDTO {
         return name;
     }
 
+    @JsonSetter("Cur_Abbreviation")
     public void setName(String name) {
         this.name = name;
     }
