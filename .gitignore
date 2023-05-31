@@ -5,7 +5,7 @@ out/
 !**/src/main/**/target/
 !**/src/test/**/target/
 *.DS_Store
-
+/src/main/java/org/example/NBRBServiceMain.java
 
 ### IntelliJ IDEA ###
 .idea/modules.xml
