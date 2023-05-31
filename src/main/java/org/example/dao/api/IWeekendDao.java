@@ -7,5 +7,9 @@ public interface IWeekendDao {
     List<LocalDate> getAllWeekends();
     List<LocalDate> getMonthlyWeekends(int month);
 
+    /**
+     * Записывает в базу указанную дату как выходной
+     * @param date
+     */
     void addWeekends(LocalDate date);
 }
