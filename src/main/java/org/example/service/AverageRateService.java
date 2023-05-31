@@ -2,7 +2,9 @@ package org.example.service;
 
 import org.example.core.dto.CurrencyDTO;
 import org.example.core.dto.AverageRateDTO;
+import org.example.core.dto.RateRangeDTO;
 import org.example.service.api.IAverageRateService;
+import org.example.service.factory.AddRatesForRangeServiceFactory;
 import org.example.service.factory.ValidationCurrencyServiceFactory;
 import org.example.service.factory.WeekendServiceFactory;
 
@@ -25,19 +27,16 @@ public class AverageRateService implements IAverageRateService {
            lastDay = MonthDay.now().getDayOfMonth();
        } else {
            switch (month) {
-               case 4, 6, 9, 11 -> {
-                   lastDay = 30;
-               }
-               case 2 -> {
-                   lastDay = 28;
-               }
+               case 4, 6, 9, 11 -> lastDay = 30;
+               case 2 -> lastDay = 28;
                default -> lastDay = 31;
            }
        }
 
        LocalDate dateFrom  = LocalDate.of( year, month, 1);
        LocalDate dateTo = LocalDate.of(year ,month, lastDay);
-       List<CurrencyDTO> rateMonthly = new ArrayList<>(); // use service
+       List<CurrencyDTO> rateMonthly = AddRatesForRangeServiceFactory.getInstance()
+               .save(new RateRangeDTO(curAbbr, dateFrom, dateTo));
 
        List<LocalDate> weekends  = WeekendServiceFactory.getInstance().getMonthlyWeekends(month);
 
