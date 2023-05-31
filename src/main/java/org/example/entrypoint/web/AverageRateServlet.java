@@ -1,6 +1,5 @@
 package org.example.entrypoint.web;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -9,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.example.core.dto.AverageRateDTO;
 import org.example.service.api.IAverageRateService;
 import org.example.service.factory.AverageRateServiceFactory;
+import org.example.service.factory.ObjectMapperFactory;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -18,7 +18,6 @@ import java.util.Map;
 public class AverageRateServlet extends HttpServlet {
     private static final String CURRENCY_PARAM_NAME = "currency";
     private static final String MONTH_PARAM_NAME = "month";
-    private ObjectMapper objectMapper = new ObjectMapper(); //use singleton
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -55,6 +54,6 @@ public class AverageRateServlet extends HttpServlet {
 
         IAverageRateService service = AverageRateServiceFactory.getInstance();
         AverageRateDTO dto = service.get(curAbbr, month);
-        writer.write(objectMapper.writeValueAsString(dto.getAvgRate()));
+        writer.write(ObjectMapperFactory.getInstance().writeValueAsString(dto.getAvgRate()));
     }
 }
