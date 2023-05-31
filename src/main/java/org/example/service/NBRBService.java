@@ -1,5 +1,6 @@
 package org.example.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.core.dto.CurrencyDTO;
 import org.example.core.dto.CurrencyTypeDTO;
@@ -15,7 +16,8 @@ import java.util.List;
 
 public class NBRBService implements IBankService {
 
-    private static final String URL_PATTERN = "https://api.nbrb.by/exrates/rates/";
+    private static final String URL_CURRENCY = "https://api.nbrb.by/exrates/rates/";
+    private static final String URL_TYPE = "https://api.nbrb.by/exrates/currencies";
     private final ObjectMapper mapper = ObjectMapperFactory.getInstance();
 
     @Override
@@ -26,7 +28,7 @@ public class NBRBService implements IBankService {
         List<LocalDate> datesOfPeriod = dto.getBeginDate().datesUntil(dto.getEndDate()).toList();
 
         for (LocalDate date : datesOfPeriod) {
-            String urlString = URL_PATTERN +
+            String urlString = URL_CURRENCY +
                     dto.getCurrencyName()
                     + "?parammode=2"
                     + "&ondate="
@@ -42,6 +44,12 @@ public class NBRBService implements IBankService {
 
     @Override
     public List<CurrencyTypeDTO> getCurrencyTypes() {
-        return null;
+        List<CurrencyTypeDTO> types;
+        try {
+            types = mapper.readValue(new URL(URL_TYPE), new TypeReference<>(){});
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return types;
     }
 }
