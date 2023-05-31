@@ -78,12 +78,57 @@ public class CurrencyDbDao implements ICurrencyDao {
 
     @Override
     public List<CurrencyDTO> getAllCurrencies(String currType, LocalDate start, LocalDate stop) {
-        return null;
+        List<CurrencyDTO> res = new ArrayList<>();
+
+        try (Connection connection = dataSource.getConnection()) {
+            PreparedStatement ps = connection.prepareStatement(
+                    "SELECT name, date, rate FROM app.currency_rates " +
+                            " WHERE name=? AND date >= ? AND date <= ?"
+            );
+
+            ps.setString(1, currType);
+            ps.setDate(2, Date.valueOf(start));
+            ps.setDate(3, Date.valueOf(stop));
+
+            ResultSet set = ps.executeQuery();
+
+            if (set != null) {
+                fillListFromResultSet(res, set);
+            }
+
+            return res;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public List<CurrencyDTO> getAllCurrenciesOnWorkdaysOnly(String currType, LocalDate start, LocalDate stop) {
-        return null;
+        List<CurrencyDTO> res = new ArrayList<>();
+
+        try (Connection connection = dataSource.getConnection()) {
+            PreparedStatement ps = connection.prepareStatement(
+                    "SELECT name, currency_rates.date, rate FROM app.currency_rates " +
+                            "INNER JOIN app.weekend ON app.currency_rates.name=? AND NOT app.weekend.is_day_off AND currency_rates.date = weekend.date  " +
+                            " WHERE app.currency_rates.date>=? AND app.currency_rates.date<=?"
+            );
+
+            ps.setString(1, currType);
+            ps.setDate(2, Date.valueOf(start));
+            ps.setDate(3, Date.valueOf(stop));
+
+            ResultSet set = ps.executeQuery();
+
+            if (set != null) {
+                fillListFromResultSet(res, set);
+            }
+
+            return res;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void fillListFromResultSet(List<CurrencyDTO> res, ResultSet set) throws SQLException {
