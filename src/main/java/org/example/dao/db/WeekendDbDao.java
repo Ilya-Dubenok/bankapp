@@ -1,7 +1,6 @@
 package org.example.dao.db;
 
 import org.example.dao.api.IWeekendDao;
-import org.example.dao.db.ds.DataSourceConnector;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -9,13 +8,13 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WeekendDao implements IWeekendDao {
+public class WeekendDbDao implements IWeekendDao {
 
 
 
     private final DataSource dataSource;
 
-    public WeekendDao(DataSource dataSource) {
+    public WeekendDbDao(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 
@@ -79,7 +78,8 @@ public class WeekendDao implements IWeekendDao {
         try (Connection connection = dataSource.getConnection()) {
             PreparedStatement ps = connection.prepareStatement(
                     "INSERT INTO app.weekend (date, is_day_off) " +
-                            "VALUES(?, true)"
+                            "VALUES(?, true) " +
+                            "ON CONFLICT DO NOTHING;"
             );
 
             ps.setDate(1, Date.valueOf(date));

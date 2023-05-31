@@ -16,7 +16,7 @@ public interface ICurrencyTypeDao {
 
     CurrencyTypeDTO getCurrencyType(long id);
 
-    CurrencyTypeDTO getCurrencyType(String name, long id);
+    CurrencyTypeDTO getCurrencyType(long id, String name);
 
 
 }

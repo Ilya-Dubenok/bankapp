@@ -1,9 +1,8 @@
 package org.example;
 
-import org.example.dao.db.WeekendDao;
+import org.example.dao.db.WeekendDbDao;
 import org.example.dao.db.ds.DataSourceConnector;
 
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -40,7 +39,7 @@ public class Main {
 
         }
 
-        WeekendDao dao = new WeekendDao(DataSourceConnector.getInstance().getDataSource());
+        WeekendDbDao dao = new WeekendDbDao(DataSourceConnector.getInstance().getDataSource());
         for (LocalDate allWeekend : dao.getMonthlyWeekends(1)) {
             System.out.println(allWeekend);
 
