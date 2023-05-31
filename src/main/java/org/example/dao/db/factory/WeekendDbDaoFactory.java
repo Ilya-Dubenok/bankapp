@@ -14,7 +14,7 @@ public class WeekendDbDaoFactory {
 
     }
 
-    public WeekendDbDao getWeekendDaoInstance() {
+    public static WeekendDbDao getWeekendDaoInstance() {
         return Holder.instance;
 
     }
