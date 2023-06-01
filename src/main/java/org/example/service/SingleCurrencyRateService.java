@@ -10,6 +10,7 @@ import java.util.List;
 
 public class SingleCurrencyRateService implements ISingleCurrencyRateService {
 
+    //TODO заменить на сервис
     private ICurrencyDao dao;
 
     public SingleCurrencyRateService(ICurrencyDao dao){
