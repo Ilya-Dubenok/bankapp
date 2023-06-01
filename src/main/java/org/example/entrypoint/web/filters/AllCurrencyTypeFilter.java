@@ -12,17 +12,21 @@ import org.example.service.factory.NBRBServiceFactory;
 import java.io.IOException;
 import java.util.List;
 
-@WebFilter(urlPatterns = "/currencytype")
+@WebFilter(urlPatterns = "/*")
 public class AllCurrencyTypeFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        ICurrencyTypeService currencyTypeService = CurrencyTypeServiceFactory.getInstance();
-        IBankService bankService = NBRBServiceFactory.getInstance();
-        List<CurrencyTypeDTO> currencyTypeDTOS = currencyTypeService.get();
-        List<CurrencyTypeDTO> currencyTypes = bankService.getCurrencyTypes();
+        boolean isFirst = true;
+        if(isFirst) {
+            isFirst = false;
+            ICurrencyTypeService currencyTypeService = CurrencyTypeServiceFactory.getInstance();
+            IBankService bankService = NBRBServiceFactory.getInstance();
+            List<CurrencyTypeDTO> currencyTypeDTOS = currencyTypeService.get();
+            List<CurrencyTypeDTO> currencyTypes = bankService.getCurrencyTypes();
 
-        if (currencyTypes.size() != currencyTypeDTOS.size()) {
-            currencyTypes.forEach(currencyTypeService::saveCurrencyType);
+            if (currencyTypes.size() != currencyTypeDTOS.size()) {
+                currencyTypes.forEach(currencyTypeService::saveCurrencyType);
+            }
         }
         chain.doFilter(request, response);
     }
