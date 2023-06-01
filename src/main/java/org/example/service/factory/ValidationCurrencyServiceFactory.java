@@ -15,7 +15,7 @@ public class ValidationCurrencyServiceFactory {
         if (instance == null) {
             synchronized (ValidationCurrencyServiceFactory.class) {
                 if (instance == null) {
-                    instance = new ValidationCurrencyService();
+                    instance = new ValidationCurrencyService(CurrencyServiceFactory.getInstance(), CurrencyTypeServiceFactory.getInstance());
                 }
             }
         }
