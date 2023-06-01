@@ -23,9 +23,7 @@ public class AddRatesForRangeService implements IAddRatesForRangeService {
         validationService.validateDate(rateRange.getEndDate().toString());
         //TODO
 
-        if (validationService.hasRatesForPeriod(rateRange.getCurrencyName(),
-                rateRange.getBeginDate(),
-                rateRange.getEndDate()))
+        if (validationService.hasRatesForPeriod(rateRange))
         {
             //TODO Возвращать данные из БД
         }
