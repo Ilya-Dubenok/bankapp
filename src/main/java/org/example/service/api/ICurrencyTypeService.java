@@ -1,10 +1,10 @@
-package org.example.dao.api;
+package org.example.service.api;
 
 import org.example.core.dto.CurrencyTypeDTO;
 
 import java.util.List;
 
-public interface ICurrencyTypeDao {
+public interface ICurrencyTypeService {
 
     CurrencyTypeDTO saveCurrencyType(CurrencyTypeDTO curType);
 
@@ -16,9 +16,8 @@ public interface ICurrencyTypeDao {
 
     CurrencyTypeDTO getCurrencyType(long id);
 
-    List<CurrencyTypeDTO> get();
-
     CurrencyTypeDTO getCurrencyType(long id, String name);
 
+    List<CurrencyTypeDTO> get();
 
 }

@@ -1,6 +1,5 @@
 package org.example.service.factory;
 
-import org.example.dao.db.factory.CurrencyDbDaoFactory;
 import org.example.service.SingleCurrencyRateService;
 import org.example.service.api.ISingleCurrencyRateService;
 
@@ -15,7 +14,7 @@ public class SingleCurrencyRateServiceFactory {
         if (instance == null) {
             synchronized (SingleCurrencyRateServiceFactory.class) {
                 if (instance == null) {
-                    instance = new SingleCurrencyRateService(CurrencyDbDaoFactory.getInstance());
+                    instance = new SingleCurrencyRateService(CurrencyServiceFactory.getInstance());
                 }
             }
         }

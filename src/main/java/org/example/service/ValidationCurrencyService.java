@@ -3,10 +3,8 @@ package org.example.service;
 import org.example.core.dto.CurrencyDTO;
 import org.example.core.dto.CurrencyTypeDTO;
 import org.example.core.dto.RateRangeDTO;
-import org.example.dao.api.ICurrencyDao;
-import org.example.dao.api.ICurrencyTypeDao;
-import org.example.dao.db.factory.CurrencyDbDaoFactory;
-import org.example.dao.db.factory.CurrencyTypeDbDaoFactory;
+import org.example.service.api.ICurrencyService;
+import org.example.service.api.ICurrencyTypeService;
 import org.example.service.api.IValidationService;
 
 import java.time.LocalDate;
@@ -26,6 +24,14 @@ public class ValidationCurrencyService implements IValidationService {
     private static final String DAY_MONTH_LEAP_PATTERN = "3002|3102|3104|3106|3109|3111";
     private static final LocalDate START_PERMISSIBLE_DATE = LocalDate.of(2022, 12, 1);
     private static final LocalDate END_PERMISSIBLE_DATE = LocalDate.of(2023, 5, 31);
+
+    private ICurrencyService currencyService;
+    private ICurrencyTypeService currencyTypeService;
+
+    public ValidationCurrencyService(ICurrencyService currencyService, ICurrencyTypeService currencyTypeService) {
+        this.currencyService = currencyService;
+        this.currencyTypeService = currencyTypeService;
+    }
 
 
     @Override
@@ -89,8 +95,7 @@ public class ValidationCurrencyService implements IValidationService {
 
     @Override
     public void validateTypeCurrency(String typeCurrency) {
-        ICurrencyTypeDao dao = CurrencyTypeDbDaoFactory.getInstance();
-        CurrencyTypeDTO currencyType = dao.getCurrencyType(typeCurrency);
+        CurrencyTypeDTO currencyType = this.currencyTypeService.getCurrencyType(typeCurrency);
         if (currencyType == null) {
             throw new IllegalArgumentException("Такой валюты не существует");
         }
@@ -98,13 +103,12 @@ public class ValidationCurrencyService implements IValidationService {
 
     @Override
     public boolean hasRatesForPeriod(RateRangeDTO dto) {
-        ICurrencyDao dao = CurrencyDbDaoFactory.getInstance();
         LocalDate beginDate = dto.getBeginDate();
         LocalDate endDate = dto.getEndDate();
         String currencyName = dto.getCurrencyName();
         validateTypeCurrency(currencyName);
         validateDates(beginDate, endDate);
-        List<CurrencyDTO> allCurrencies = dao.getAllCurrencies(currencyName, beginDate, endDate);
+        List<CurrencyDTO> allCurrencies = this.currencyService.getAllCurrencies(currencyName, beginDate, endDate);
         long between = DAYS.between(beginDate, endDate) + 1;
 
         return allCurrencies.size() == between;

@@ -1,13 +1,14 @@
 package org.example.dao.db;
 
-import org.example.core.dto.CurrencyDTO;
 import org.example.core.dto.CurrencyTypeDTO;
-import org.example.dao.api.ICurrencyDao;
 import org.example.dao.api.ICurrencyTypeDao;
 
 import javax.sql.DataSource;
-import java.sql.*;
-import java.time.LocalDate;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class CurrencyTypeDbDao implements ICurrencyTypeDao {
@@ -42,7 +43,7 @@ public class CurrencyTypeDbDao implements ICurrencyTypeDao {
 
     @Override
     public List<CurrencyTypeDTO> saveCurrencyTypes(List<CurrencyTypeDTO> curTypesList) {
-        try (Connection connection = dataSource.getConnection()){
+        try (Connection connection = dataSource.getConnection()) {
             PreparedStatement ps = connection.prepareStatement(
                     "INSERT INTO app.currency_types (id,name)" +
                             "VALUES(?,?) " +
@@ -67,7 +68,7 @@ public class CurrencyTypeDbDao implements ICurrencyTypeDao {
 
     @Override
     public boolean currencyExists(CurrencyTypeDTO curType) {
-        try (Connection connection = dataSource.getConnection()){
+        try (Connection connection = dataSource.getConnection()) {
             PreparedStatement ps = connection.prepareStatement(
                     "SELECT id,name FROM app.currency_types " +
                             " WHERE " +
@@ -75,7 +76,7 @@ public class CurrencyTypeDbDao implements ICurrencyTypeDao {
 
             );
 
-            ps.setString(2,curType.getName());
+            ps.setString(2, curType.getName());
             ps.setLong(1, curType.getId());
 
             ResultSet set = ps.executeQuery();
@@ -143,7 +144,29 @@ public class CurrencyTypeDbDao implements ICurrencyTypeDao {
     }
 
     @Override
-    public CurrencyTypeDTO getCurrencyType(long id,String name) {
+    public List<CurrencyTypeDTO> get() {
+        List<CurrencyTypeDTO> currencyTypeDTOS = new ArrayList<>();
+
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement ps = connection.prepareStatement("SELECT id, name FROM app.currency_types;")) {
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int id = rs.getInt("id");
+                    String name = rs.getString("name");
+                    currencyTypeDTOS.add(new CurrencyTypeDTO(id, name));
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return currencyTypeDTOS;
+    }
+
+    @Override
+    public CurrencyTypeDTO getCurrencyType(long id, String name) {
         CurrencyTypeDTO res = null;
         try (Connection connection = dataSource.getConnection()) {
             PreparedStatement ps = connection.prepareStatement(
