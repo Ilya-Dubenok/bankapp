@@ -1,6 +1,6 @@
 package org.example.service.factory;
 
-import org.example.service.ValidationService;
+import org.example.service.ValidationCurrencyService;
 import org.example.service.api.IValidationService;
 
 public class ValidationCurrencyServiceFactory {
@@ -15,7 +15,7 @@ public class ValidationCurrencyServiceFactory {
         if (instance == null) {
             synchronized (ValidationCurrencyServiceFactory.class) {
                 if (instance == null) {
-                    instance = new ValidationService();
+                    instance = new ValidationCurrencyService();
                 }
             }
         }
