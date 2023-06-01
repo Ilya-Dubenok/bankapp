@@ -14,9 +14,9 @@ import java.util.List;
 
 @WebFilter(urlPatterns = "/*")
 public class AllCurrencyTypeFilter implements Filter {
+    private boolean isFirst = true;
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        boolean isFirst = true;
         if(isFirst) {
             isFirst = false;
             ICurrencyTypeService currencyTypeService = CurrencyTypeServiceFactory.getInstance();
