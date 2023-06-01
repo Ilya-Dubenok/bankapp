@@ -55,7 +55,7 @@ public class ValidationCurrencyService implements IValidationService {
         }
 
         if (!Pattern.matches(MONTH_PATTERN, month)) {
-            throw new IllegalArgumentException("Неверныц месяц");
+            throw new IllegalArgumentException("Неверный месяц");
         }
 
         if (!Pattern.matches(YEAR_PATTERN, year)) {

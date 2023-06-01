@@ -47,13 +47,15 @@ public class AverageRateServlet extends HttpServlet {
             }
             if(monthRaw.length == 1) {
                 month = Integer.parseInt(monthRaw[0]);
+                if(month < 0 || month > 12) {
+                    throw new IllegalArgumentException("No such month.");
+                }
             }
         } else {
             throw new IllegalArgumentException("No month selected.");
         }
 
-        IAverageRateService service = AverageRateServiceFactory.getInstance();
-        AverageRateDTO dto = service.get(curAbbr, month);
-        writer.write(ObjectMapperFactory.getInstance().writeValueAsString(dto.getAvgRate()));
+        AverageRateDTO dto = AverageRateServiceFactory.getInstance().get(new AverageRateDTO(curAbbr, month));
+        writer.write(ObjectMapperFactory.getInstance().writeValueAsString(dto.getAvgRate().toString()));
     }
 }
