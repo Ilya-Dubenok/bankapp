@@ -1,6 +1,7 @@
 package org.example.service;
 
 import org.example.core.dto.CurrencyDTO;
+import org.example.core.dto.RateRangeCreateDTO;
 import org.example.core.dto.RateRangeDTO;
 import org.example.service.api.IAddRatesForRangeService;
 import org.example.service.api.ICurrencyService;
@@ -9,6 +10,8 @@ import org.example.service.factory.CurrencyServiceFactory;
 import org.example.service.factory.NBRBServiceFactory;
 import org.example.service.factory.ValidationCurrencyServiceFactory;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,9 +22,20 @@ public class AddRatesForRangeService implements IAddRatesForRangeService {
     ICurrencyService currencyService = CurrencyServiceFactory.getInstance();
 
     @Override
-    public List<CurrencyDTO> save(RateRangeDTO rateRange, Boolean showOnlyNew) {
+    public List<CurrencyDTO> save(RateRangeCreateDTO createDTO, Boolean showOnlyNew) {
 
-        validate(rateRange);
+        RateRangeDTO rateRange = createRateRangeDTO(createDTO);
+
+        return save(rateRange, showOnlyNew);
+    }
+
+    @Override
+    public List<CurrencyDTO> save(RateRangeDTO rateRange) {
+        return save(rateRange, false);
+    }
+
+    @Override
+    public List<CurrencyDTO> save(RateRangeDTO rateRange, Boolean showOnlyNew){
 
         List<CurrencyDTO> currencies;
 
@@ -44,18 +58,24 @@ public class AddRatesForRangeService implements IAddRatesForRangeService {
         return currencies;
     }
 
-    @Override
-    public List<CurrencyDTO> save(RateRangeDTO rateRange) {
-        return save(rateRange, false);
-    }
+    private RateRangeDTO createRateRangeDTO(RateRangeCreateDTO createDTO){
 
-    private void validate(RateRangeDTO rateRange){
-        validationService.validateTypeCurrency(rateRange.getCurrencyName());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-        validationService.validateDate(rateRange.getBeginDate().toString());
-        validationService.validateDate(rateRange.getEndDate().toString());
+        validationService.validateTypeCurrency(createDTO.getCurrencyName());
 
-        validationService.validateDates(rateRange.getBeginDate(), rateRange.getEndDate());
+        validationService.validateDate(createDTO.getBeginDate());
+        validationService.validateDate(createDTO.getEndDate());
+
+        String name = createDTO.getCurrencyName();
+        LocalDate beginDate = LocalDate.parse(createDTO.getBeginDate(), formatter);
+        LocalDate endDate = LocalDate.parse(createDTO.getEndDate(), formatter);
+
+        RateRangeDTO dto = new RateRangeDTO(name, beginDate, endDate);
+
+        validationService.validateDates(dto.getBeginDate(), dto.getEndDate());
+
+        return dto;
     }
 
     private boolean hasRatesForPeriod(RateRangeDTO rateRange){
