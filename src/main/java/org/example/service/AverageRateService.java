@@ -13,15 +13,14 @@ import java.math.MathContext;
 import java.time.LocalDate;
 import java.time.MonthDay;
 import java.time.Year;
-import java.util.ArrayList;
 import java.util.List;
 
 public class AverageRateService implements IAverageRateService {
-   public AverageRateDTO get(String curAbbr, int month) {
-       validate(curAbbr, month);
-       AverageRateDTO dto = new AverageRateDTO(curAbbr, month);
+   public AverageRateDTO get(AverageRateDTO dto) {
+       ValidationCurrencyServiceFactory.getInstance().validateTypeCurrency(dto.getCurName());
 
        int year =  Year.now().getValue();
+       int month = dto.getMonth();
        int lastDay;
        if(month == MonthDay.now().getMonthValue()) {
            lastDay = MonthDay.now().getDayOfMonth();
@@ -35,18 +34,22 @@ public class AverageRateService implements IAverageRateService {
 
        LocalDate dateFrom  = LocalDate.of( year, month, 1);
        LocalDate dateTo = LocalDate.of(year ,month, lastDay);
+       ValidationCurrencyServiceFactory.getInstance().validateDates(dateFrom, dateTo);
+
        List<CurrencyDTO> rateMonthly = AddRatesForRangeServiceFactory.getInstance()
-               .save(new RateRangeDTO(curAbbr, dateFrom, dateTo));
+               .save(new RateRangeDTO(dto.getCurName(), dateFrom, dateTo));
 
        List<LocalDate> weekends  = WeekendServiceFactory.getInstance().getMonthlyWeekends(month);
 
-       BigDecimal sum = BigDecimal.ONE;
-       for (CurrencyDTO currencyDTO : rateMonthly) {
-           if(!weekends.contains(currencyDTO.getDate())) {
-               sum = countGeoMean(sum, currencyDTO.getRate());
+       if(rateMonthly != null && weekends != null) {
+           BigDecimal sum = BigDecimal.ONE;
+           for (CurrencyDTO currencyDTO : rateMonthly) {
+               if(!weekends.contains(currencyDTO.getDate())) {
+                   sum = countGeoMean(sum, currencyDTO.getRate());
+               }
            }
+           dto.setAvgRate(sum);
        }
-       dto.setAvgRate(sum);
 
        return dto;
    }
@@ -55,12 +58,5 @@ public class AverageRateService implements IAverageRateService {
        sum = sum.multiply(second);
        sum = sum.sqrt(new MathContext(0));
        return sum;
-   }
-
-   private void validate(String curAbbr, int month) { //use validate service?
-       ValidationCurrencyServiceFactory.getInstance().validateTypeCurrency(curAbbr);
-       if(month < 0 || month > 12) {
-           throw new IllegalArgumentException("No such month");
-       }
    }
 }
