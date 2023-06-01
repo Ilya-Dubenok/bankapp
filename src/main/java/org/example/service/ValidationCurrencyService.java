@@ -4,7 +4,7 @@ import org.example.service.api.IValidationService;
 
 import java.time.LocalDate;
 
-public class ValidationService implements IValidationService {
+public class ValidationCurrencyService implements IValidationService {
     @Override
     public void validateDate(String startDate) {
 
