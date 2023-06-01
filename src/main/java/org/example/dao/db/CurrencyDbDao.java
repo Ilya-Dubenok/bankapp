@@ -60,8 +60,9 @@ public class CurrencyDbDao implements ICurrencyDao {
 
         try (Connection connection = dataSource.getConnection()) {
             PreparedStatement ps = connection.prepareStatement(
-                    "SELECT name, date, rate FROM app.currency_rates;"
+                    "SELECT name, date, rate FROM app.currency_rates WHERE name = ?;"
             );
+            ps.setString(1, currType);
 
             ResultSet set = ps.executeQuery();
 
