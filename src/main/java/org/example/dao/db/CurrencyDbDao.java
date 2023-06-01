@@ -155,7 +155,7 @@ public class CurrencyDbDao implements ICurrencyDao {
                 needComma = true;
             }
 
-            sb.append(" ((SELECT id FROM app.currency_types WHERE app.currency_types.name = ?),?,?,?)");
+            sb.append(" ((SELECT id FROM app.currency_types WHERE app.currency_types.name = ? LIMIT 1),?,?,?)");
         }
 
         return sb.toString();
