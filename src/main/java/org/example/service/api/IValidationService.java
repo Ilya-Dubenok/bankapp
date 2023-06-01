@@ -7,6 +7,8 @@ import java.time.LocalDate;
 public interface IValidationService {
     void validateDate(String date);
 
+    void validateDate(LocalDate date);
+
     void validateDates(LocalDate startDate, LocalDate endDate);
 
     void validateTypeCurrency(String typeCurrency);

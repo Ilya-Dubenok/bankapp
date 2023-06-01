@@ -10,6 +10,7 @@ import org.example.dao.db.factory.CurrencyTypeDbDaoFactory;
 import org.example.service.api.IValidationService;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -17,6 +18,7 @@ import static java.time.temporal.ChronoUnit.DAYS;
 
 public class ValidationCurrencyService implements IValidationService {
 
+    private static final String DATE_FORMAT = "yyyy-MM-dd";
     private static final String DAY_PATTERN = "[0-2][1-9]|31|30|10|20";
     private static final String MONTH_PATTERN = "0[1-9]|1[0-2]";
     private static final String YEAR_PATTERN = "[1-2]\\d{3}";
@@ -27,12 +29,12 @@ public class ValidationCurrencyService implements IValidationService {
 
 
     @Override
-    public void validateDate(String startDate) {
-        if (startDate.length() != 10) {
+    public void validateDate(String date) {
+        if (date.length() != 10) {
             throw new IllegalArgumentException("Неверная длина даты");
         }
 
-        String[] dateParts = startDate.split("-");
+        String[] dateParts = date.split("-");
 
         if (dateParts.length != 3) {
             throw new IllegalArgumentException("Неверный даты");
@@ -57,6 +59,18 @@ public class ValidationCurrencyService implements IValidationService {
         if (!validateDayMonth(day, month, year)) {
             throw new IllegalArgumentException("Неверная дата рождения");
         }
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
+        LocalDate parseDate = LocalDate.parse(date, formatter);
+        validateDate(parseDate);
+
+    }
+
+    @Override
+    public void validateDate(LocalDate date) {
+        if (date.isBefore(START_PERMISSIBLE_DATE) || date.isAfter(END_PERMISSIBLE_DATE)) {
+            throw new IllegalArgumentException("Недопустимая дата. Доступны данный в период с 01.12.2022 по 31.05.2023");
+        }
     }
 
     @Override
@@ -64,7 +78,10 @@ public class ValidationCurrencyService implements IValidationService {
         if (startDate.isAfter(endDate)) {
             throw new IllegalArgumentException("Начальная дата раньше конечной");
         }
-        if (startDate.isBefore(START_PERMISSIBLE_DATE) || endDate.isAfter(END_PERMISSIBLE_DATE)) {
+        try {
+            validateDate(startDate);
+            validateDate(endDate);
+        } catch (IllegalArgumentException ex) {
             throw new IllegalArgumentException("Недопустимый период. Доступны данный в период с 01.12.2022 по 31.05.2023");
         }
     }
