@@ -81,4 +81,5 @@ public class AddRatesForRangeService implements IAddRatesForRangeService {
     private boolean hasRatesForPeriod(RateRangeDTO rateRange){
         return validationService.hasRatesForPeriod(rateRange);
     }
+
 }

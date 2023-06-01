@@ -12,4 +12,5 @@ public interface IAddRatesForRangeService {
      List<CurrencyDTO> save(RateRangeDTO rateRange, Boolean showOnlyNew);
 
      List<CurrencyDTO> save(RateRangeDTO rateRange);
+
 }
