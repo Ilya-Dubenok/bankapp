@@ -1,12 +1,18 @@
 package org.example.service.api;
 
+import org.example.core.dto.RateRangeDTO;
+
 import java.time.LocalDate;
 
 public interface IValidationService {
-    void validateDate(String startDate);
+    void validateDate(String date);
+
+    void validateDate(LocalDate date);
+
+    void validateDates(LocalDate startDate, LocalDate endDate);
 
     void validateTypeCurrency(String typeCurrency);
 
-    boolean hasRatesForPeriod(String typeCurrency, LocalDate startDate, LocalDate endDate);
+    boolean hasRatesForPeriod(RateRangeDTO dto);
 
 }

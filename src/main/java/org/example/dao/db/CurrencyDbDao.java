@@ -60,8 +60,9 @@ public class CurrencyDbDao implements ICurrencyDao {
 
         try (Connection connection = dataSource.getConnection()) {
             PreparedStatement ps = connection.prepareStatement(
-                    "SELECT name, date, rate FROM app.currency_rates;"
+                    "SELECT name, date, rate FROM app.currency_rates WHERE name = ?;"
             );
+            ps.setString(1, currType);
 
             ResultSet set = ps.executeQuery();
 
@@ -154,7 +155,7 @@ public class CurrencyDbDao implements ICurrencyDao {
                 needComma = true;
             }
 
-            sb.append(" ((SELECT id FROM app.currency_types WHERE app.currency_types.name = ?),?,?,?)");
+            sb.append(" ((SELECT id FROM app.currency_types WHERE app.currency_types.name = ? LIMIT 1),?,?,?)");
         }
 
         return sb.toString();

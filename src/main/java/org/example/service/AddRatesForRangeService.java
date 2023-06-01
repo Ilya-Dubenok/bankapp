@@ -55,8 +55,6 @@ public class AddRatesForRangeService implements IAddRatesForRangeService {
     }
 
     private boolean hasRatesForPeriod(RateRangeDTO rateRange){
-        return validationService.hasRatesForPeriod(rateRange.getCurrencyName(),
-                rateRange.getBeginDate(),
-                rateRange.getEndDate());
+        return validationService.hasRatesForPeriod(rateRange);
     }
 }

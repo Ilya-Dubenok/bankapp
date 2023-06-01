@@ -14,7 +14,7 @@ public class SingleCurrencyRateServiceFactory {
         if (instance == null) {
             synchronized (SingleCurrencyRateServiceFactory.class) {
                 if (instance == null) {
-                    instance = new SingleCurrencyRateService();
+                    instance = new SingleCurrencyRateService(CurrencyServiceFactory.getInstance());
                 }
             }
         }
