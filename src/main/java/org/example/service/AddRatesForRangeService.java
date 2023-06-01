@@ -3,7 +3,9 @@ package org.example.service;
 import org.example.core.dto.CurrencyDTO;
 import org.example.core.dto.RateRangeDTO;
 import org.example.service.api.IAddRatesForRangeService;
+import org.example.service.api.ICurrencyService;
 import org.example.service.api.IValidationService;
+import org.example.service.factory.CurrencyServiceFactory;
 import org.example.service.factory.NBRBServiceFactory;
 import org.example.service.factory.ValidationCurrencyServiceFactory;
 
@@ -14,9 +16,12 @@ import java.util.List;
 public class AddRatesForRangeService implements IAddRatesForRangeService {
 
     IValidationService validationService = ValidationCurrencyServiceFactory.getInstance();
+    ICurrencyService currencyService = CurrencyServiceFactory.getInstance();
 
     @Override
     public List<CurrencyDTO> save(RateRangeDTO rateRange, Boolean showOnlyNew) {
+
+        validate(rateRange);
 
         List<CurrencyDTO> currencies;
 
@@ -24,19 +29,18 @@ public class AddRatesForRangeService implements IAddRatesForRangeService {
             if (showOnlyNew){
                 currencies = new ArrayList<>();
             } else {
-                //TODO Возвращать данные из БД
-                currencies = NBRBServiceFactory.getInstance().getCurrency(rateRange);
+                currencies = currencyService.getAllCurrencies(rateRange.getCurrencyName(),
+                        rateRange.getBeginDate(),
+                        rateRange.getEndDate());
             }
         } else {
+            currencies = NBRBServiceFactory.getInstance().getCurrency(rateRange);
             if (showOnlyNew){
-                //TODO Сохранение в базу, в currencies список из базы
-                currencies = NBRBServiceFactory.getInstance().getCurrency(rateRange);
+                currencies = currencyService.saveCurrencies(rateRange.getCurrencyName(), currencies);
             } else {
-                //TODO Сохранение в базу, в currencies список всех из NBRBService
-                currencies = NBRBServiceFactory.getInstance().getCurrency(rateRange);
+                currencyService.saveCurrencies(rateRange.getCurrencyName(), currencies);
             }
         }
-
         return currencies;
     }
 
@@ -48,10 +52,10 @@ public class AddRatesForRangeService implements IAddRatesForRangeService {
     private void validate(RateRangeDTO rateRange){
         validationService.validateTypeCurrency(rateRange.getCurrencyName());
 
-        //TODO изменить после правки validateDate()
         validationService.validateDate(rateRange.getBeginDate().toString());
         validationService.validateDate(rateRange.getEndDate().toString());
-        //TODO
+
+        validationService.validateDates(rateRange.getBeginDate(), rateRange.getEndDate());
     }
 
     private boolean hasRatesForPeriod(RateRangeDTO rateRange){

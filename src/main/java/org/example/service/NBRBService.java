@@ -25,7 +25,7 @@ public class NBRBService implements IBankService {
 
         List<CurrencyDTO> currencyDTOS = new ArrayList<>();
 
-        List<LocalDate> datesOfPeriod = dto.getBeginDate().datesUntil(dto.getEndDate()).toList();
+        List<LocalDate> datesOfPeriod = dto.getBeginDate().datesUntil(dto.getEndDate().plusDays(1)).toList();
 
         for (LocalDate date : datesOfPeriod) {
             String urlString = URL_CURRENCY +

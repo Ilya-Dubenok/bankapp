@@ -10,11 +10,9 @@ import org.example.core.dto.RateRangeDTO;
 import org.example.core.dto.CurrencyDTO;
 import org.example.service.api.IAddRatesForRangeService;
 import org.example.service.factory.AddRatesForRangeServiceFactory;
-import org.example.service.factory.DateTimeFormatterFactory;
 import org.example.service.factory.ObjectMapperFactory;
 
 import java.io.IOException;
-import java.text.DateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -25,7 +23,6 @@ public class AddRatesForRangeServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         ObjectMapper mapper = ObjectMapperFactory.getInstance();
-        StringBuilder builder = new StringBuilder();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         String currencyName = req.getParameter("name");
