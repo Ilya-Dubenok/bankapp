@@ -21,13 +21,13 @@ public class CurrencyDbDao implements ICurrencyDao {
     public List<CurrencyDTO> saveCurrencies(String currType, List<CurrencyDTO> currencyDTOsToAd) {
         List<CurrencyDTO> res = new ArrayList<>();
 
-        try (Connection connection = dataSource.getConnection()) {
-            PreparedStatement ps = connection.prepareStatement(
-                    "INSERT INTO app.currency_rates (id, name, date, rate) VALUES".concat(getStringForList(currencyDTOsToAd))
-                            +
-                            " ON CONFLICT DO NOTHING " +
-                            " RETURNING id, name, date, rate;"
-            );
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement ps = connection.prepareStatement(
+                     "INSERT INTO app.currency_rates (id, name, date, rate) VALUES".concat(getStringForList(currencyDTOsToAd))
+                             +
+                             " ON CONFLICT DO NOTHING " +
+                             " RETURNING id, name, date, rate;"
+             )) {
 
 
             for (int i = 0, j = 1; i < currencyDTOsToAd.size(); i++, j += 4) {
@@ -58,10 +58,11 @@ public class CurrencyDbDao implements ICurrencyDao {
     public List<CurrencyDTO> getAllCurrencies(String currType) {
         List<CurrencyDTO> res = new ArrayList<>();
 
-        try (Connection connection = dataSource.getConnection()) {
-            PreparedStatement ps = connection.prepareStatement(
-                    "SELECT name, date, rate FROM app.currency_rates WHERE name = ?;"
-            );
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement ps = connection.prepareStatement(
+                     "SELECT name, date, rate FROM app.currency_rates WHERE name = ?;"
+             )) {
+
             ps.setString(1, currType);
 
             ResultSet set = ps.executeQuery();
@@ -81,11 +82,12 @@ public class CurrencyDbDao implements ICurrencyDao {
     public List<CurrencyDTO> getAllCurrencies(String currType, LocalDate start, LocalDate stop) {
         List<CurrencyDTO> res = new ArrayList<>();
 
-        try (Connection connection = dataSource.getConnection()) {
-            PreparedStatement ps = connection.prepareStatement(
-                    "SELECT name, date, rate FROM app.currency_rates " +
-                            " WHERE name=? AND date >= ? AND date <= ?"
-            );
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement ps = connection.prepareStatement(
+                     "SELECT name, date, rate FROM app.currency_rates " +
+                             " WHERE name=? AND date >= ? AND date <= ?"
+             )) {
+
 
             ps.setString(1, currType);
             ps.setDate(2, Date.valueOf(start));
@@ -108,12 +110,13 @@ public class CurrencyDbDao implements ICurrencyDao {
     public List<CurrencyDTO> getAllCurrenciesOnWorkdaysOnly(String currType, LocalDate start, LocalDate stop) {
         List<CurrencyDTO> res = new ArrayList<>();
 
-        try (Connection connection = dataSource.getConnection()) {
-            PreparedStatement ps = connection.prepareStatement(
-                    "SELECT name, currency_rates.date, rate FROM app.currency_rates " +
-                            "INNER JOIN app.weekend ON app.currency_rates.name=? AND NOT app.weekend.is_day_off AND currency_rates.date = weekend.date  " +
-                            " WHERE app.currency_rates.date>=? AND app.currency_rates.date<=?"
-            );
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement ps = connection.prepareStatement(
+                     "SELECT name, currency_rates.date, rate FROM app.currency_rates " +
+                             "INNER JOIN app.weekend ON app.currency_rates.name=? AND NOT app.weekend.is_day_off AND currency_rates.date = weekend.date  " +
+                             " WHERE app.currency_rates.date>=? AND app.currency_rates.date<=?"
+             )) {
+
 
             ps.setString(1, currType);
             ps.setDate(2, Date.valueOf(start));

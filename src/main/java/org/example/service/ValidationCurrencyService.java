@@ -63,7 +63,7 @@ public class ValidationCurrencyService implements IValidationService {
         }
 
         if (!validateDayMonth(day, month, year)) {
-            throw new IllegalArgumentException("Неверная дата рождения");
+            throw new IllegalArgumentException("Неверная дата");
         }
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
