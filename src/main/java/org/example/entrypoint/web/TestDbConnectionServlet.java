@@ -35,11 +35,14 @@ public class TestDbConnectionServlet extends HttpServlet {
 
 
         ) {
+            try{
+                ResultSet set = ps.executeQuery();
+                if (set.next()) {
+                    writer.write(String.valueOf(set.getString(1).startsWith("app")));
 
-            ResultSet set = ps.executeQuery();
-            if (set.next()) {
-                writer.write(String.valueOf(set.getString(1).startsWith("app")));
-
+                }
+            } catch (SQLException | IOException e) {
+                throw new RuntimeException(e);
             }
 
 

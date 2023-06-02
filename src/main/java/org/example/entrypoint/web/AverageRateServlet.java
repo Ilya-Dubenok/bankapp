@@ -6,12 +6,12 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.example.core.dto.AverageRateDTO;
-import org.example.service.api.IAverageRateService;
 import org.example.service.factory.AverageRateServiceFactory;
 import org.example.service.factory.ObjectMapperFactory;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
 import java.util.Map;
 
 @WebServlet(urlPatterns = "/averagerate")
@@ -56,6 +56,9 @@ public class AverageRateServlet extends HttpServlet {
         }
 
         AverageRateDTO dto = AverageRateServiceFactory.getInstance().get(new AverageRateDTO(curAbbr, month));
+        if(dto.getAvgRate().equals(BigDecimal.ZERO)) {
+            resp.sendError(400, "Average rate for " + dto.getCurName() + " cannot be processed due to unexpected error.");
+        }
         writer.write(ObjectMapperFactory.getInstance().writeValueAsString(dto.getAvgRate().toString()));
     }
 }

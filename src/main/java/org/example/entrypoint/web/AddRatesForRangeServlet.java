@@ -40,4 +40,6 @@ public class AddRatesForRangeServlet extends HttpServlet {
 
         resp.getWriter().write(jsonResponse);
     }
+
+
 }
