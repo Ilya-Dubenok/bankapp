@@ -42,10 +42,11 @@ public class CurrencyDbDao implements ICurrencyDao {
             }
 
 
-            ResultSet set = ps.executeQuery();
+            try (ResultSet set = ps.executeQuery()) {
 
-            if (set != null) {
-                fillListFromResultSet(res, set);
+                if (set != null) {
+                    fillListFromResultSet(res, set);
+                }
             }
             return res;
 
@@ -65,10 +66,11 @@ public class CurrencyDbDao implements ICurrencyDao {
 
             ps.setString(1, currType);
 
-            ResultSet set = ps.executeQuery();
+            try (ResultSet set = ps.executeQuery()) {
 
-            if (set != null) {
-                fillListFromResultSet(res, set);
+                if (set != null) {
+                    fillListFromResultSet(res, set);
+                }
             }
 
             return res;
@@ -93,10 +95,11 @@ public class CurrencyDbDao implements ICurrencyDao {
             ps.setDate(2, Date.valueOf(start));
             ps.setDate(3, Date.valueOf(stop));
 
-            ResultSet set = ps.executeQuery();
+            try (ResultSet set = ps.executeQuery()) {
 
-            if (set != null) {
-                fillListFromResultSet(res, set);
+                if (set != null) {
+                    fillListFromResultSet(res, set);
+                }
             }
 
             return res;
@@ -122,10 +125,11 @@ public class CurrencyDbDao implements ICurrencyDao {
             ps.setDate(2, Date.valueOf(start));
             ps.setDate(3, Date.valueOf(stop));
 
-            ResultSet set = ps.executeQuery();
+            try (ResultSet set = ps.executeQuery()) {
 
-            if (set != null) {
-                fillListFromResultSet(res, set);
+                if (set != null) {
+                    fillListFromResultSet(res, set);
+                }
             }
 
             return res;
