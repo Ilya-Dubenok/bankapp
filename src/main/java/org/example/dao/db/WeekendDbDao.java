@@ -28,14 +28,15 @@ public class WeekendDbDao implements IWeekendDao {
              );) {
 
 
-            ResultSet rs = ps.executeQuery();
-            if (rs != null)
-                while (rs.next()) {
-                    res.add(
-                            rs.getDate(1).toLocalDate()
-                    );
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs != null)
+                    while (rs.next()) {
+                        res.add(
+                                rs.getDate(1).toLocalDate()
+                        );
 
-                }
+                    }
+            }
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -58,15 +59,15 @@ public class WeekendDbDao implements IWeekendDao {
 
             ps.setInt(1, month);
 
-            ResultSet rs = ps.executeQuery();
-            if (rs != null)
-                while (rs.next()) {
-                    res.add(
-                            rs.getDate(1).toLocalDate()
-                    );
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs != null)
+                    while (rs.next()) {
+                        res.add(
+                                rs.getDate(1).toLocalDate()
+                        );
 
-                }
-
+                    }
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

@@ -81,10 +81,10 @@ public class CurrencyTypeDbDao implements ICurrencyTypeDao {
             ps.setString(2, curType.getName());
             ps.setLong(1, curType.getId());
 
-            ResultSet set = ps.executeQuery();
+            try (ResultSet set = ps.executeQuery()) {
 
-            return set != null && set.next();
-
+                return set != null && set.next();
+            }
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -104,13 +104,14 @@ public class CurrencyTypeDbDao implements ICurrencyTypeDao {
 
             ps.setString(1, name);
 
-            ResultSet set = ps.executeQuery();
-            if (null != set && set.next()) {
-                res = new CurrencyTypeDTO(
-                        set.getLong("id"),
-                        set.getString("name")
-                );
+            try (ResultSet set = ps.executeQuery()) {
+                if (null != set && set.next()) {
+                    res = new CurrencyTypeDTO(
+                            set.getLong("id"),
+                            set.getString("name")
+                    );
 
+                }
             }
 
         } catch (SQLException e) {
@@ -132,13 +133,14 @@ public class CurrencyTypeDbDao implements ICurrencyTypeDao {
 
             ps.setLong(1, id);
 
-            ResultSet set = ps.executeQuery();
-            if (null != set && set.next()) {
-                res = new CurrencyTypeDTO(
-                        set.getLong("id"),
-                        set.getString("name")
-                );
+            try (ResultSet set = ps.executeQuery()) {
+                if (null != set && set.next()) {
+                    res = new CurrencyTypeDTO(
+                            set.getLong("id"),
+                            set.getString("name")
+                    );
 
+                }
             }
 
         } catch (SQLException e) {
@@ -183,13 +185,14 @@ public class CurrencyTypeDbDao implements ICurrencyTypeDao {
             ps.setLong(1, id);
             ps.setString(2, name);
 
-            ResultSet set = ps.executeQuery();
-            if (null != set && set.next()) {
-                res = new CurrencyTypeDTO(
-                        set.getLong("id"),
-                        set.getString("name")
-                );
+            try (ResultSet set = ps.executeQuery()) {
+                if (null != set && set.next()) {
+                    res = new CurrencyTypeDTO(
+                            set.getLong("id"),
+                            set.getString("name")
+                    );
 
+                }
             }
 
         } catch (SQLException e) {
