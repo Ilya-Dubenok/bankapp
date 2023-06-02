@@ -26,7 +26,7 @@ public class AddRatesForRangeServlet extends HttpServlet {
         String currencyName = req.getParameter("name");
         String beginDate = req.getParameter("beginDate");
         String endDate = req.getParameter("endDate");
-        Boolean showOnlyNew = false;
+        boolean showOnlyNew = false;
         if (req.getParameterMap().containsKey("showOnlyNew")){
             showOnlyNew = Boolean.parseBoolean(req.getParameter("showOnlyNew"));
         }
