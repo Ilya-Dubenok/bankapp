@@ -1,7 +1,5 @@
 package org.example.core.dto;
 
-import java.time.LocalDate;
-
 public class RateRangeCreateDTO {
     private final String currencyName;
     private final String beginDate;

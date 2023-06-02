@@ -54,9 +54,8 @@ public class AverageRateService implements IAverageRateService {
        return dto;
    }
 
-   private BigDecimal countGeoMean(BigDecimal sum, BigDecimal second) {
-       sum = sum.multiply(second);
-       sum = sum.sqrt(new MathContext(0));
-       return sum;
+   private BigDecimal countGeoMean(BigDecimal sum, BigDecimal second) throws ArithmeticException{
+       BigDecimal result = sum.multiply(second);
+       return result.sqrt(MathContext.DECIMAL64);
    }
 }
