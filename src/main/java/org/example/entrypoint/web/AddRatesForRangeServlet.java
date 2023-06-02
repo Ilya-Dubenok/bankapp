@@ -17,7 +17,7 @@ import java.util.List;
 
 @WebServlet("/add_rates")
 public class AddRatesForRangeServlet extends HttpServlet {
-    IAddRatesForRangeService service = AddRatesForRangeServiceFactory.getInstance();
+    private final IAddRatesForRangeService service = AddRatesForRangeServiceFactory.getInstance();
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         ObjectMapper mapper = ObjectMapperFactory.getInstance();
