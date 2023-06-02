@@ -17,7 +17,7 @@ import java.util.List;
 
 @WebServlet("/add_rates")
 public class AddRatesForRangeServlet extends HttpServlet {
-    IAddRatesForRangeService service = AddRatesForRangeServiceFactory.getInstance();
+    private final IAddRatesForRangeService service = AddRatesForRangeServiceFactory.getInstance();
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         ObjectMapper mapper = ObjectMapperFactory.getInstance();
@@ -26,7 +26,7 @@ public class AddRatesForRangeServlet extends HttpServlet {
         String currencyName = req.getParameter("name");
         String beginDate = req.getParameter("beginDate");
         String endDate = req.getParameter("endDate");
-        Boolean showOnlyNew = false;
+        boolean showOnlyNew = false;
         if (req.getParameterMap().containsKey("showOnlyNew")){
             showOnlyNew = Boolean.parseBoolean(req.getParameter("showOnlyNew"));
         }

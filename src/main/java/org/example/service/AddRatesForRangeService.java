@@ -18,8 +18,8 @@ import java.util.List;
 
 public class AddRatesForRangeService implements IAddRatesForRangeService {
 
-    IValidationService validationService = ValidationCurrencyServiceFactory.getInstance();
-    ICurrencyService currencyService = CurrencyServiceFactory.getInstance();
+    private final IValidationService validationService = ValidationCurrencyServiceFactory.getInstance();
+    private final ICurrencyService currencyService = CurrencyServiceFactory.getInstance();
 
     @Override
     public List<CurrencyDTO> save(RateRangeCreateDTO createDTO, Boolean showOnlyNew) {
