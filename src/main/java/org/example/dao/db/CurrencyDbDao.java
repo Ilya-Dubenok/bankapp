@@ -4,6 +4,7 @@ import org.example.core.dto.CurrencyDTO;
 import org.example.dao.api.ICurrencyDao;
 
 import javax.sql.DataSource;
+import java.math.BigDecimal;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -26,52 +27,36 @@ public class CurrencyDbDao implements ICurrencyDao {
 
         try (Connection connection = dataSource.getConnection();
              PreparedStatement ps = connection.prepareStatement(
-                     ("INSERT INTO app.currency_rates (id, name, date, rate) VALUES" +
-                             "((SELECT id FROM app.currency_types WHERE app.currency_types.name = ? LIMIT 1),?,?,?)"
-                             +
-                             " ON CONFLICT DO NOTHING; "
-                     ));
-             PreparedStatement ps2 = connection.prepareStatement("SELECT name, date, rate " +
-                     "FROM app.currency_rates WHERE name = ? AND date >= ? AND date <= ?;")
-
+                     ("WITH temp_id_table(id) AS (SELECT id FROM app.currency_types WHERE name = ? LIMIT 1) " +
+                             " INSERT INTO app.currency_rates (id, name, date, rate) VALUES " +
+                             " ((SELECT id FROM temp_id_table),unnest(?),unnest(?),unnest(?)) " +
+                             " ON CONFLICT DO NOTHING" +
+                             " RETURNING id,name,date,rate; "
+                     ))
         ) {
+            int sizeOfCurrencyList = currencyDTOsToAd.size();
 
-            LocalDate startDate = null;
-            LocalDate endDate = null;
+            String[] names = new String[sizeOfCurrencyList];
+            LocalDate[] dates = new LocalDate[sizeOfCurrencyList];
+            BigDecimal[] rates = new BigDecimal[sizeOfCurrencyList];
 
-            connection.setAutoCommit(false);
+            ps.setString(1, currType);  //1 field
 
-            for (CurrencyDTO dto : currencyDTOsToAd) {
+            for (int i = 0; i < sizeOfCurrencyList; i++) {
 
+                CurrencyDTO dto = currencyDTOsToAd.get(i);
                 LocalDate dateOfCurrentDto = dto.getDate();
-
-                if (startDate == null || dateOfCurrentDto.isBefore(startDate)) {
-                    startDate = dateOfCurrentDto;
-                }
-
-                if (endDate == null || dateOfCurrentDto.isAfter(endDate)) {
-                    endDate = dateOfCurrentDto;
-                }
-                ps.setString(1, currType);  //1 field
-                ps.setString(2, dto.getName());  //2 field
-                ps.setDate(3, Date.valueOf(dto.getDate()));  //3 field
-                ps.setBigDecimal(4, dto.getRate());  //4 field
-                ps.addBatch();
+                names[i] = currType;
+                dates[i] = dateOfCurrentDto;
+                rates[i] = dto.getRate();
 
             }
+            ps.setArray(2, connection.createArrayOf("text", names));
+            ps.setArray(3, connection.createArrayOf("date", dates));
+            ps.setArray(4, connection.createArrayOf("numeric", rates));
 
-            assert startDate != null;
-            ps2.setString(1, currType);
-            ps2.setDate(2,Date.valueOf(startDate));
-            ps2.setDate(3,Date.valueOf(endDate));
-
-            ps.executeBatch();
-            ResultSet set = ps2.executeQuery();
-
-
-            connection.commit();
-            connection.setAutoCommit(true);
-            fillListFromResultSet(res,set);
+            ResultSet set = ps.executeQuery();
+            fillListFromResultSet(res, set);
 
             return res;
 
@@ -176,23 +161,4 @@ public class CurrencyDbDao implements ICurrencyDao {
         }
     }
 
-    @Deprecated
-    private String getStringForList(List<CurrencyDTO> currencyDTOsToAd) {
-        StringBuilder sb = new StringBuilder();
-        boolean needComma = false;
-
-        for (CurrencyDTO currencyDTO : currencyDTOsToAd) {
-            if (needComma) {
-                sb.append(",");
-            } else {
-                needComma = true;
-            }
-
-            sb.append(" ((SELECT id FROM app.currency_types WHERE app.currency_types.name = ? LIMIT 1),?,?,?)");
-        }
-
-        return sb.toString();
-
-
-    }
 }

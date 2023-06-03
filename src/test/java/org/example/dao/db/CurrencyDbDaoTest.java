@@ -13,6 +13,8 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 class CurrencyDbDaoTest {
 
@@ -27,14 +29,16 @@ class CurrencyDbDaoTest {
             List.of(
                     new CurrencyDTO(NAME_USD, BigDecimal.valueOf(3.25), LocalDate.of(2022, 12, 12)),
                     new CurrencyDTO(NAME_USD, BigDecimal.valueOf(3.28), LocalDate.of(2022, 12, 13)),
-                    new CurrencyDTO(NAME_USD, BigDecimal.valueOf(3.21), LocalDate.of(2022, 12, 14))
+                    new CurrencyDTO(NAME_USD, BigDecimal.valueOf(3.21), LocalDate.of(2022, 12, 14)),
+                    new CurrencyDTO(NAME_USD, BigDecimal.valueOf(3.21), LocalDate.of(2022, 12, 15)),
+                    new CurrencyDTO(NAME_USD, BigDecimal.valueOf(3.21), LocalDate.of(2022, 12, 16))
             )
     );
 
     private final List<CurrencyDTO> fakeListOfSimpleUsdList = List.of(
-            new CurrencyDTO(NAME_USD, BigDecimal.valueOf(3.23), LocalDate.of(2022, 12, 12)),
-            new CurrencyDTO(NAME_USD, BigDecimal.valueOf(3.28), LocalDate.of(2022, 12, 13)),
-            new CurrencyDTO(NAME_USD, BigDecimal.valueOf(3.21), LocalDate.of(2022, 12, 14))
+            new CurrencyDTO(NAME_USD, BigDecimal.valueOf(1), LocalDate.of(2022, 12, 12)),
+            new CurrencyDTO(NAME_USD, BigDecimal.valueOf(1), LocalDate.of(2022, 12, 13)),
+            new CurrencyDTO(NAME_USD, BigDecimal.valueOf(1), LocalDate.of(2022, 12, 14))
 
     );
 
@@ -71,7 +75,7 @@ class CurrencyDbDaoTest {
 
     }
 
-    @AfterAll
+    //    @AfterAll
     static void tearDown() throws SQLException {
         try (
                 Connection connection = dataSource.getConnection();
@@ -95,11 +99,40 @@ class CurrencyDbDaoTest {
     }
 
     @Test
-    void saveThreeCurrenciesWorksWell() {
+    void saveFiveCurrencies() {
         CurrencyDbDao dao = new CurrencyDbDao(dataSource);
 
+        List<CurrencyDTO> crossList = List.of(
+                new CurrencyDTO(NAME_USD, BigDecimal.valueOf(3.28), LocalDate.of(2022, 12, 13)),
+                new CurrencyDTO(NAME_USD, BigDecimal.valueOf(3.21), LocalDate.of(2022, 12, 15)),
+                new CurrencyDTO(NAME_USD, BigDecimal.valueOf(3.21), LocalDate.of(2022, 12, 16))
+        );
+
+        dao.saveCurrencies(NAME_USD, crossList);
+
+        List<CurrencyDTO> returnedCurrencies = dao.saveCurrencies(NAME_USD, simpleUsdList); // only dates 12,14 are expected to be returned
+
+        Set<CurrencyDTO> res = returnedCurrencies.stream().filter(
+                key -> crossList.stream().anyMatch
+                        (x -> twoCurrencyDTOsAreEqual(key, x))
+        ).collect(Collectors.toSet());
+
+        Assertions.assertEquals(2, returnedCurrencies.size());
+        Assertions.assertEquals(0, res.size()); // no dates
+
+    }
+
+    @Test
+    void saveFiveCurrenciesWithCrossedDates() {
+        CurrencyDbDao dao = new CurrencyDbDao(dataSource);
+
+        dao.saveCurrencies("USD", List.of(
+                new CurrencyDTO(NAME_USD, BigDecimal.valueOf(3.334), LocalDate.of(2022, 12, 17)),
+                new CurrencyDTO(NAME_USD, BigDecimal.valueOf(3.2), LocalDate.of(2022, 12, 18))
+        ));
         List<CurrencyDTO> returnedCurrencies = dao.saveCurrencies(NAME_USD, simpleUsdList);
 
+        Assertions.assertEquals(simpleUsdList.size(), returnedCurrencies.size());
 
         Assertions.assertTrue(
                 returnedCurrencies.stream().allMatch(
