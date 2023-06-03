@@ -38,8 +38,6 @@ public class TestDataSourceConnector {
 
     }
 
-    ;
-
 
     public static TestDataSourceConnector getInstance() {
         return Holder.instance;
