@@ -75,7 +75,7 @@ class CurrencyDbDaoTest {
 
     }
 
-    //    @AfterAll
+    @AfterAll
     static void tearDown() throws SQLException {
         try (
                 Connection connection = dataSource.getConnection();
