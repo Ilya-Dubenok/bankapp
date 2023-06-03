@@ -51,17 +51,16 @@ public class DataSourceConnector {
     }
 
     public DataSource getDataSource() {
-        if (isFirstConnection) {
-            initDbBase();
-            isFirstConnection = false;
-        }
         return dataSource;
     }
 
+    /**
+     * should be used ONLY for when data is dropped on dev stages
+     */
     private void initDbBase() {
         ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
 
-        populator.addScript(new ClassPathResource("createSchemaTableEtc.sql"));
+        populator.addScript(new ClassPathResource("fillWithDefaultData.sql"));
         populator.execute(this.dataSource);
     }
 
