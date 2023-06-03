@@ -10,4 +10,6 @@ public interface IBankService {
     List<CurrencyDTO> getCurrency(RateRangeDTO dto);
 
     List<CurrencyTypeDTO> getCurrencyTypes();
+
+    CurrencyTypeDTO getCurrencyType(String name);
 }

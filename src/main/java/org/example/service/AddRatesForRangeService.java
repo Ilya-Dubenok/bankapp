@@ -4,6 +4,7 @@ import org.example.core.dto.CurrencyDTO;
 import org.example.core.dto.CurrencyTypeDTO;
 import org.example.core.dto.RateRangeDTO;
 import org.example.service.api.IAddRatesForRangeService;
+import org.example.service.api.IBankService;
 import org.example.service.api.ICurrencyService;
 import org.example.service.api.ICurrencyTypeService;
 import org.example.service.factory.CurrencyServiceFactory;
@@ -23,6 +24,7 @@ public class AddRatesForRangeService implements IAddRatesForRangeService {
 
     private final ICurrencyService currencyService = CurrencyServiceFactory.getInstance();
     private final ICurrencyTypeService currencyTypeService = CurrencyTypeServiceFactory.getInstance();
+    private final IBankService bankService = NBRBServiceFactory.getInstance();
 
     @Override
     public List<CurrencyDTO> save(RateRangeDTO rateRange) {
@@ -45,7 +47,7 @@ public class AddRatesForRangeService implements IAddRatesForRangeService {
                         rateRange.getEndDate());
             }
         } else {
-            currencies = NBRBServiceFactory.getInstance().getCurrency(rateRange);
+            currencies = bankService.getCurrency(rateRange);
             if (showOnlyNew){
                 currencies = currencyService.saveCurrencies(rateRange.getCurrencyName(), currencies);
             } else {
@@ -56,20 +58,28 @@ public class AddRatesForRangeService implements IAddRatesForRangeService {
     }
 
     private void validate(RateRangeDTO rateRange){
-        LocalDate beginDate = rateRange.getBeginDate();
-        LocalDate endDate = rateRange.getEndDate();
+        validateName(rateRange.getCurrencyName());
+        validateDates(rateRange.getBeginDate(), rateRange.getEndDate());
+    }
 
-        CurrencyTypeDTO currencyType = this.currencyTypeService.getCurrencyType(rateRange.getCurrencyName());
-        if (currencyType == null) {
-            throw new IllegalArgumentException("Такой валюты не существует");
-        }
-
+    private void validateDates(LocalDate beginDate, LocalDate endDate){
         if (beginDate.isAfter(endDate)) {
             throw new IllegalArgumentException("Начальная дата раньше конечной");
         }
 
         if (beginDate.isBefore(START_PERMISSIBLE_DATE) || endDate.isAfter(END_PERMISSIBLE_DATE)){
             throw new IllegalArgumentException("Недопустимый период. Доступны данный в период с 01.12.2022 по 31.05.2023");
+        }
+    }
+    private void validateName(String name){
+        CurrencyTypeDTO currencyType = this.currencyTypeService.getCurrencyType(name);
+        if (currencyType == null) {
+            currencyType = bankService.getCurrencyType(name);
+            if (currencyType != null){
+                currencyTypeService.saveCurrencyType(currencyType);
+            } else {
+                throw new IllegalArgumentException("Недопустимый тип валюты");
+            }
         }
     }
 

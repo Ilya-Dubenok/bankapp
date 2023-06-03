@@ -52,4 +52,16 @@ public class NBRBService implements IBankService {
         }
         return types;
     }
+
+    @Override
+    public CurrencyTypeDTO getCurrencyType(String name) {
+        CurrencyTypeDTO typeDTO = null;
+        String urlString = URL_CURRENCY + name + "?parammode=2";
+        try {
+            typeDTO = mapper.readValue(new URL(urlString), CurrencyTypeDTO.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return typeDTO;
+    }
 }
