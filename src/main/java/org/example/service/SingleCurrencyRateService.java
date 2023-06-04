@@ -23,7 +23,7 @@ public class SingleCurrencyRateService implements ISingleCurrencyRateService {
     }
 
     @Override
-    public List<CurrencyDTO> get(String currencyType) throws CurrencyNotExistsException {
+    public List<CurrencyDTO> get(String currencyType) {
         CurrencyTypeDTO currencyTypeDto = this.currencyTypeService.getCurrencyType(currencyType);
 
         if (currencyTypeDto == null) {
