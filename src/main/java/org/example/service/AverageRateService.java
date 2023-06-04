@@ -5,7 +5,6 @@ import org.example.core.dto.AverageRateDTO;
 import org.example.core.dto.RateRangeDTO;
 import org.example.service.api.IAverageRateService;
 import org.example.service.factory.AddRatesForRangeServiceFactory;
-import org.example.service.factory.ValidationCurrencyServiceFactory;
 import org.example.service.factory.WeekendServiceFactory;
 
 import java.math.BigDecimal;
@@ -16,8 +15,9 @@ import java.time.Year;
 import java.util.List;
 
 public class AverageRateService implements IAverageRateService {
+    private static final LocalDate START_PERMISSIBLE_DATE = LocalDate.of(2022, 12, 1);
+    private static final LocalDate END_PERMISSIBLE_DATE = LocalDate.of(2023, 5, 31);
    public AverageRateDTO get(AverageRateDTO dto) {
-       ValidationCurrencyServiceFactory.getInstance().validateTypeCurrency(dto.getCurName());
 
        int year =  Year.now().getValue();
        int month = dto.getMonth();
@@ -34,7 +34,13 @@ public class AverageRateService implements IAverageRateService {
 
        LocalDate dateFrom  = LocalDate.of( year, month, 1);
        LocalDate dateTo = LocalDate.of(year ,month, lastDay);
-       ValidationCurrencyServiceFactory.getInstance().validateDates(dateFrom, dateTo);
+       if(dateFrom.isAfter(dateTo)) {
+           throw new IllegalArgumentException("Начальная дата раньше конечной.");
+       }
+       if (dateFrom.isBefore(START_PERMISSIBLE_DATE) || dateFrom.isAfter(END_PERMISSIBLE_DATE) ||
+               dateTo.isBefore(START_PERMISSIBLE_DATE) || dateTo.isAfter(END_PERMISSIBLE_DATE)) {
+           throw new IllegalArgumentException("Недопустимая дата. Доступны данный в период с 01.12.2022 по 31.05.2023");
+       }
 
        List<CurrencyDTO> rateMonthly = AddRatesForRangeServiceFactory.getInstance()
                .save(new RateRangeDTO(dto.getCurName(), dateFrom, dateTo));
