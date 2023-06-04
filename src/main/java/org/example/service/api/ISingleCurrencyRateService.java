@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface ISingleCurrencyRateService {
 
-    List<CurrencyDTO> get(String currencyType) throws CurrencyNotExistsException;
+    List<CurrencyDTO> get(String currencyType);
 
 }

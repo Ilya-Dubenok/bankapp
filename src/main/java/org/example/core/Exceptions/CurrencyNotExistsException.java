@@ -1,6 +1,6 @@
 package org.example.core.Exceptions;
 
-public class CurrencyNotExistsException extends Exception{
+public class CurrencyNotExistsException extends RuntimeException{
     public CurrencyNotExistsException() {
     }
 
