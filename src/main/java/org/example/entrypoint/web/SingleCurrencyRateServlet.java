@@ -21,22 +21,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 
-@WebServlet(urlPatterns = "/singlecurrencyrate", loadOnStartup = 0)
+@WebServlet(urlPatterns = "/singlecurrencyrate")
 public class SingleCurrencyRateServlet extends HttpServlet {
 
     private static final String TYPE_CURRENCY_PARAM = "typeCurrency";
-
-    @Override
-    public void init(ServletConfig config) throws ServletException {
-        ICurrencyTypeService currencyTypeService = CurrencyTypeServiceFactory.getInstance();
-        IBankService bankService = NBRBServiceFactory.getInstance();
-        List<CurrencyTypeDTO> currencyTypeDTOS = currencyTypeService.get();
-        List<CurrencyTypeDTO> currencyTypes = bankService.getCurrencyTypes();
-
-        if (currencyTypes.size() != currencyTypeDTOS.size()) {
-            currencyTypeService.saveCurrencyTypes(currencyTypes);
-        }
-    }
 
 
     @Override
