@@ -27,7 +27,6 @@ public class CurrencyDTO {
         return name;
     }
 
-    @JsonSetter("Cur_Abbreviation")
     public void setName(String name) {
         this.name = name;
     }
